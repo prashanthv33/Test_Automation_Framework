@@ -89,6 +89,8 @@ flowchart TB
 ├── tests/
 │   ├── setup/             auth.setup.ts — log in once, save session
 │   ├── ui/  api/  hybrid/  visual/  a11y/
+├── templates/             copy-paste starters: page object, UI test, API test
+├── docs/                  GETTING_STARTED.md (new testers) · CONTRIBUTING.md
 ├── Dockerfile
 └── playwright.config.ts   projects: setup · chromium · firefox · webkit · mobile-chrome · api · bdd · visual · a11y
 ```
@@ -105,6 +107,45 @@ npm run test:smoke        # fast confidence check (~1 min)
 npm test                  # everything
 npm run report            # open the Playwright HTML report
 ```
+
+> **New to the framework?** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) walks through
+> setup, running, debugging, reading reports and common problems step by step.
+
+## Test your own application
+
+Point the framework at your app and get a working UI test and API test in a few minutes. The
+[`templates/`](templates) folder has starter files that run unchanged against the demo apps,
+so you can check your setup before editing anything.
+
+**1. Configure** — create `config/env/.env.local` (git-ignored):
+
+```bash
+BASE_URL=https://your-app.example.com
+API_URL=https://api.your-app.example.com
+UI_USERNAME=...   UI_PASSWORD=...
+API_USERNAME=...  API_PASSWORD=...
+```
+
+**2. Functional test** — copy `templates/MyPage.template.ts` → `src/pages/HomePage.ts` and
+`templates/my-ui.template.spec.ts` → `tests/ui/home.spec.ts`, fill in your locators, then:
+
+```bash
+npx playwright test tests/ui/home.spec.ts --project=chromium --no-deps
+```
+
+**3. API test** — copy `templates/my-api.template.spec.ts` → `tests/api/items.spec.ts`,
+change the endpoints, then:
+
+```bash
+npx playwright test tests/api/items.spec.ts --project=api
+```
+
+**4. View results** — `npm run report` (screenshots of every test, plus video and trace for
+failures).
+
+`--no-deps` skips the login setup, which targets the demo app. To log in to your app once for
+all UI tests, adapt `tests/setup/auth.setup.ts` — see
+[Getting started → Test your own application](docs/GETTING_STARTED.md#6-test-your-own-application).
 
 ### Useful scripts
 
@@ -209,8 +250,11 @@ docker run --rm pw-hybrid npx playwright test --project=api # one project
 
 ## Adding a test
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for how to add a page object, an API client, a
-BDD step or a new test.
+- **First time here:** [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) — setup, running,
+  debugging, reports, testing your own app, troubleshooting.
+- **Extending the framework:** [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) — adding a page
+  object, an API client, a BDD step or a new test.
+- **Starters:** [templates/](templates) — page object, UI test and API test to copy.
 
 ## Tech stack
 

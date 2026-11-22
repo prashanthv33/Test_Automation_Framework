@@ -52,7 +52,9 @@ export default defineConfig({
     baseURL: env.BASE_URL,
     testIdAttribute: 'data-test',
     trace: isCI ? 'on-first-retry' : 'retain-on-failure',
-    screenshot: 'only-on-failure',
+    // A full-page screenshot of the final state is attached to every browser
+    // test (pass or fail), so the HTML and Allure reports show what each test saw.
+    screenshot: { mode: 'on', fullPage: true },
     video: 'retain-on-failure',
     actionTimeout: 10_000,
     navigationTimeout: 20_000,

@@ -15,7 +15,7 @@ export default tseslint.config(
   },
   ...tseslint.configs.recommended,
   {
-    files: ['tests/**/*.ts', 'src/steps/**/*.ts'],
+    files: ['tests/**/*.ts', 'templates/**/*.ts', 'src/steps/**/*.ts'],
     ...playwright.configs['flat/recommended'],
     rules: {
       ...playwright.configs['flat/recommended'].rules,
