@@ -28,6 +28,6 @@
       "@fixtures/*": ["src/fixtures/*"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts", "merge.config.ts"],
   "exclude": ["node_modules", ".features-gen"]
 }

@@ -15,7 +15,7 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: npm ci
       - run: npx playwright test --project=visual --update-snapshots
       - name: Commit new baselines
