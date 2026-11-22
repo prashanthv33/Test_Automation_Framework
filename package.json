@@ -1,0 +1,77 @@
+{
+  "name": "playwright-hybrid-framework",
+  "version": "1.0.0",
+  "description": "Hybrid test automation framework: Playwright + TypeScript with UI, API, BDD, visual and accessibility testing",
+  "scripts": {
+    "bddgen": "bddgen",
+    "pretest": "bddgen",
+    "test": "playwright test",
+    "test:smoke": "bddgen && playwright test --grep @smoke --project=chromium --project=api --project=bdd",
+    "test:regression": "bddgen && playwright test --grep @regression",
+    "test:ui": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:chromium": "playwright test --project=chromium",
+    "test:mobile": "playwright test --project=mobile-chrome",
+    "test:api": "playwright test --project=api",
+    "test:bdd": "bddgen && playwright test --project=bdd",
+    "test:visual": "playwright test --project=visual",
+    "test:visual:update": "playwright test --project=visual --update-snapshots",
+    "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD\":/work -w /work mcr.microsoft.com/playwright:v1.65.1-noble /bin/bash -c \"npm ci && npx playwright test --project=visual --update-snapshots\"",
+    "test:a11y": "playwright test --project=a11y",
+    "test:staging": "cross-env TEST_ENV=staging npm run test:smoke",
+    "test:headed": "playwright test --project=chromium --headed",
+    "test:debug": "playwright test --project=chromium --debug",
+    "test:ui-mode": "bddgen && playwright test --ui",
+    "report": "playwright show-report",
+    "report:allure": "allure generate allure-results --clean -o allure-report && allure open allure-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "playwright",
+    "typescript",
+    "test-automation",
+    "bdd",
+    "api-testing",
+    "visual-testing",
+    "accessibility",
+    "page-object-model"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.65.1",
+    "@types/node": "^26.6.6",
+    "allure-commandline": "^2.46.1",
+    "allure-playwright": "^3.15.0",
+    "cross-env": "^10.1.0",
+    "csv-parse": "^7.0.3",
+    "dotenv": "^18.0.10",
+    "eslint": "^10.15.0",
+    "eslint-plugin-playwright": "^2.12.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.2",
+    "playwright-bdd": "^9.2.1",
+    "prettier": "^3.10.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "zod": "^4.6.7"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  }
+}

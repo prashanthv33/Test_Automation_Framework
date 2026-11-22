@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/.auth/
+
+# playwright-bdd generated specs
+/.features-gen/
+
+# Allure
+/allure-results/
+/allure-report/
+
+# Local env overrides (never commit real secrets)
+config/env/.env.local
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

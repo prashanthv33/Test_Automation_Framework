@@ -1,0 +1,6 @@
+{
+  "cucumber.features": ["features/**/*.feature"],
+  "cucumber.glue": ["src/steps/**/*.ts"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

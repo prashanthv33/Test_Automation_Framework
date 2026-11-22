@@ -1,0 +1,4 @@
+scenario,firstName,lastName,postalCode,expectedError
+missing first name,,Doe,10001,First Name is required
+missing last name,Jane,,10001,Last Name is required
+missing postal code,Jane,Doe,,Postal Code is required

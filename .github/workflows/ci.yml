@@ -1,0 +1,55 @@
+name: CI
+
+# Fast feedback on every push / PR: static checks + smoke suite.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint · Format · Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+
+  smoke:
+    name: Smoke (Chromium + API + BDD)
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Run smoke suite
+        run: npm run test:smoke
+        env:
+          TEST_ENV: qa
+          # Secrets override the committed demo defaults when configured.
+          UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+          API_PASSWORD: ${{ secrets.API_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: smoke-playwright-report
+          path: playwright-report/
+          retention-days: 14

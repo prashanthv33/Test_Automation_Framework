@@ -1,0 +1,145 @@
+name: Nightly Regression
+
+# Full cross-browser regression, sharded, with merged HTML + Allure reports
+# published to GitHub Pages (Allure keeps run-over-run history/trends).
+on:
+  schedule:
+    - cron: '0 2 * * *' # 02:00 UTC daily
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: Target environment
+        type: choice
+        options: [qa, staging]
+        default: qa
+
+permissions:
+  contents: write # push the report to the gh-pages branch
+
+env:
+  TEST_ENV: ${{ inputs.test_env || 'qa' }}
+
+jobs:
+  regression:
+    name: Regression shard ${{ matrix.shard }}/4
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx bddgen
+      - name: Run tests (all projects except visual)
+        env:
+          UI_PASSWORD: ${{ secrets.UI_PASSWORD }}
+          API_PASSWORD: ${{ secrets.API_PASSWORD }}
+        run: >
+          npx playwright test
+          --project=chromium --project=firefox --project=webkit --project=mobile-chrome
+          --project=api --project=bdd --project=a11y
+          --shard=${{ matrix.shard }}/4
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ matrix.shard }}
+          path: blob-report/
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: allure-results-${{ matrix.shard }}
+          path: allure-results/
+          retention-days: 3
+
+  visual:
+    name: Visual regression (Docker)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Same image used to generate the linux baselines → pixel-identical fonts.
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright test --project=visual
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-visual
+          path: blob-report/
+          retention-days: 3
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: allure-results-visual
+          path: allure-results/
+          retention-days: 3
+
+  report:
+    name: Merge & publish reports
+    if: ${{ !cancelled() }}
+    needs: [regression, visual]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: blob-report-*
+          path: all-blob-reports
+          merge-multiple: true
+      - name: Merge into one HTML report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+
+      - name: Restore Allure history from gh-pages
+        continue-on-error: true # first run: no gh-pages branch yet
+        run: |
+          git fetch origin gh-pages --depth=1
+          git worktree add gh-pages origin/gh-pages
+          cp -r gh-pages/allure/history allure-results/history
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Generate Allure report
+        run: npx allure generate allure-results --clean -o site/allure
+
+      - name: Assemble site
+        run: |
+          cp -r playwright-report site/playwright
+          cat > site/index.html <<'EOF'
+          <!doctype html><meta charset="utf-8"><title>Test reports</title>
+          <h1>Nightly test reports</h1>
+          <ul><li><a href="allure/">Allure report (trends &amp; history)</a></li>
+          <li><a href="playwright/">Playwright HTML report (traces)</a></li></ul>
+          EOF
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: site
+          publish_branch: gh-pages
+          force_orphan: true
