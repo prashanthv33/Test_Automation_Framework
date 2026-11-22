@@ -1,8 +1,8 @@
 # Playwright Hybrid Test Automation Framework
 
-[![CI](https://github.com/vprashanth33/Test_Automation_Framework/actions/workflows/ci.yml/badge.svg)](https://github.com/vprashanth33/Test_Automation_Framework/actions/workflows/ci.yml)
-[![Nightly Regression](https://github.com/vprashanth33/Test_Automation_Framework/actions/workflows/nightly.yml/badge.svg)](https://github.com/vprashanth33/Test_Automation_Framework/actions/workflows/nightly.yml)
-[![Allure Report](https://img.shields.io/badge/report-Allure-orange)](https://vprashanth33.github.io/Test_Automation_Framework/allure/)
+[![CI](https://github.com/prashanthv33/Test_Automation_Framework/actions/workflows/ci.yml/badge.svg)](https://github.com/prashanthv33/Test_Automation_Framework/actions/workflows/ci.yml)
+[![Nightly Regression](https://github.com/prashanthv33/Test_Automation_Framework/actions/workflows/nightly.yml/badge.svg)](https://github.com/prashanthv33/Test_Automation_Framework/actions/workflows/nightly.yml)
+[![Allure Report](https://img.shields.io/badge/report-Allure-orange)](https://prashanthv33.github.io/Test_Automation_Framework/allure/)
 ![Playwright](https://img.shields.io/badge/Playwright-1.65-2EAD33?logo=playwright)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -96,7 +96,7 @@ flowchart TB
 ## Quick start
 
 ```bash
-git clone https://github.com/vprashanth33/Test_Automation_Framework.git
+git clone https://github.com/prashanthv33/Test_Automation_Framework.git
 cd Test_Automation_Framework
 npm ci
 npx playwright install --with-deps
