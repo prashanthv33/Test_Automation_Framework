@@ -1,0 +1,1 @@
+[{"values":["qa"],"name":"TEST_ENV"},{"values":["https://www.saucedemo.com"],"name":"BASE_URL"},{"values":["https://restful-booker.herokuapp.com"],"name":"API_URL"},{"values":["v22.23.5"],"name":"NODE_VERSION"},{"values":["linux"],"name":"OS"}]
